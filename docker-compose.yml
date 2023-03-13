@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  app:
-    image: ghcr.io/rgmf/laravel-rie-server:latest
+  rieapp:
+    image: laravel-rie-server
     build:
       dockerfile: docker/Dockerfile
     env_file:
@@ -10,13 +10,13 @@ services:
     volumes:
       - ./storage:/app/storage
     ports:
-      - "8000:80"
+      - "8888:80"
     networks:
       - rienetwork
     depends_on:
-      - mariadb
+      - riemariadb
 
-  mariadb:
+  riemariadb:
     image: mariadb:10
     ports:
       - "33067:3306"
@@ -28,7 +28,7 @@ services:
       MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
-      - "mariadbdata:/var/lib/mysql"
+      - "riemariadbdata:/var/lib/mysql"
     networks:
       - rienetwork
 
@@ -37,5 +37,5 @@ networks:
     driver: bridge
 
 volumes:
-  mariadbdata:
+  riemariadbdata:
     driver: local
