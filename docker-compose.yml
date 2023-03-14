@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./storage:/app/storage
+      - .:/app
     ports:
       - "8888:80"
     networks:

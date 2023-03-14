@@ -25,7 +25,11 @@
             </div>
             </div>
         @empty
-            No hay nada que mostrar
+            <div class="col-md-3 mt-4">
+                <p class="alert alert-danger">
+                    No hay nada que mostrar
+                </p>
+            </div>
         @endforelse
     </div>
 @endsection
