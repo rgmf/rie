@@ -8,15 +8,23 @@
                 <p>{{ $album->description }}</p>
             @endif
         </div>
-
-        <div class="col-md-8 offset-md-2">
-            <ul>
-                @forelse ($album->medias as $media)
-                    <li>{{ $media->data }}</li>
-                @empty
-                    <p>No hay imágenes ni vídeos en este álbum</p>
-                @endforelse
-            </ul>
-        </div>
+    </div>
+    <div class="row">
+        @forelse ($album->medias as $media)
+            <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mt-4">
+                @if ($media->media_type == "video")
+                    <video width="100%" controls loop>
+                        <source src="{{ $media->data }}">
+                        Vídeo no soportado por tu navegador web
+                    </video>
+                @else
+                    <img src="{{ $media->thumbnail }}" width="100%">
+                @endif
+            </div>
+        @empty
+            <div class="col-md-8 mt-4 offset-md-2">
+                <p class="alert alert-info">No hay imágenes ni vídeos en este álbum</p>
+            </div>
+        @endforelse
     </div>
 @endsection
