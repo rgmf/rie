@@ -1,41 +1,49 @@
-version: '3'
+version: "3.9"
 
 services:
-  rieapp:
-    image: laravel-rie-server
+  rie-php-cli:
     build:
-      dockerfile: docker/Dockerfile
-    env_file:
-      - .env
+      context: ./docker/php-cli
+    tty: true
     volumes:
-      - .:/app
+      - ./app:/var/www
+    networks:
+      - rie-network
+
+  rie-nginx:
+    build:
+      context: ./docker/nginx
     ports:
       - "8888:80"
-    networks:
-      - rienetwork
-    depends_on:
-      - riemariadb
-
-  riemariadb:
-    image: mariadb:10
-    ports:
-      - "33067:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_USER: '${DB_USERNAME}'
-      MYSQL_PASSWORD: '${DB_PASSWORD}'
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    tty: true
     volumes:
-      - "riemariadbdata:/var/lib/mysql"
+      - ./app:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
     networks:
-      - rienetwork
+      - rie-network
+
+  rie-php-fpm:
+    build:
+      context: ./docker/php-fpm
+    tty: true
+    volumes:
+      - ./app:/var/www
+    networks:
+      - rie-network
+
+  rie-mariadb:
+    image: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MARIADB_DATABASE: "${DB_DATABASE}"
+      MARIADB_USER: "${DB_USERNAME}"
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - ./rie-mariadbdata:/var/lib/mysql
 
 networks:
-  rienetwork:
-    driver: bridge
+  rie-network:
 
 volumes:
-  riemariadbdata:
-    driver: local
+  rie-mariadbdata:
+      driver: local
