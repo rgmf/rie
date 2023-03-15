@@ -1,48 +1,54 @@
-version: "3.9"
+version: "3.8"
 
 services:
-  rie-php-cli:
-    build:
-      context: ./docker/php-cli
-    tty: true
-    volumes:
-      - ./app:/var/www
-    networks:
-      - rie-network
-
   rie-nginx:
-    build:
-      context: ./docker/nginx
+    image: nginx:alpine
     ports:
-      - "8888:80"
-    tty: true
-    volumes:
-      - ./app:/var/www
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - 8888:80
+      - 443:443
     networks:
       - rie-network
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
 
-  rie-php-fpm:
+  rie-app:
     build:
-      context: ./docker/php-fpm
-    tty: true
-    volumes:
-      - ./app:/var/www
+      dockerfile: docker/php-fpm/Dockerfile
     networks:
       - rie-network
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - rie-mariadb
 
   rie-mariadb:
     image: mariadb
+    env_file:
+      - .env
     environment:
       MARIADB_ROOT_PASSWORD: "${DB_PASSWORD}"
       MARIADB_DATABASE: "${DB_DATABASE}"
       MARIADB_USER: "${DB_USERNAME}"
       MARIADB_PASSWORD: "${DB_PASSWORD}"
+    networks:
+      - rie-network
     volumes:
       - ./rie-mariadbdata:/var/lib/mysql
 
+  rie-node:
+    image: node:18-alpine
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - /var/www/node_modules
+    command: sh /var/www/node_start.sh
+    depends_on:
+      - rie-app
+
 networks:
   rie-network:
+    driver: bridge
 
 volumes:
   rie-mariadbdata:
