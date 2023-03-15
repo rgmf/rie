@@ -36,15 +36,18 @@ services:
     volumes:
       - ./rie-mariadbdata:/var/lib/mysql
 
-  rie-node:
-    image: node:18-alpine
-    working_dir: /var/www
+  rie-npm:
+    image: node:current-alpine
     volumes:
       - ./:/var/www
-      - /var/www/node_modules
-    command: sh /var/www/node_start.sh
-    depends_on:
-      - rie-app
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+      - "5173:5173"
+    working_dir: /var/www
+    entrypoint: [ 'npm' ]
+    networks:
+      - rie-network
 
 networks:
   rie-network:

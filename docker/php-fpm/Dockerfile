@@ -28,12 +28,9 @@ RUN docker-php-ext-install pdo_mysql zip exif pcntl
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
-# Instalamos composer
-# RUN curl -sS <https://getcomposer.org/installer> | php -- --install-dir=/usr/local/bin --filename=composer
-
 # Copiamos todos los archivos de la carpeta actual de nuestra
 # computadora (los archivos de laravel) a /var/www/
-COPY --chown=www-data:www-data . /var/www/
+COPY . /var/www/
 
 # Instalamos dependendencias de composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -41,9 +38,6 @@ RUN composer install --no-ansi --no-dev --no-interaction --no-progress --optimiz
 
 # Exponemos el puerto 9000 a la network
 EXPOSE 9000
-
-# Corremos el comando php-fpm para ejecutar PHP
-#CMD [""php-fpm""]
 
 # Para evitar problemas de permisos: creamos un nuevo grupo usando el GID 1000
 # y creamos un usuario llamado "laravel". Asociamos ese usuario con el grupo
