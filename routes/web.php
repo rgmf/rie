@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AlbumController;
+use App\Http\Controllers\MediasAccessController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +19,7 @@ use App\Http\Controllers\AlbumController;
 Route::get('/', function () {
     return redirect()->route('albums.index');
 });
+
+Route::get('/file/medias/{album}/{media}', [MediasAccessController::class, 'serve']);
 
 Route::resource('albums', AlbumController::class)->only(['index', 'show']);

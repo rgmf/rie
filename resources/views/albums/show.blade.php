@@ -18,7 +18,7 @@
                         Vídeo no soportado por tu navegador web
                     </video>
                 @else
-                    <img src="{{ $media->thumbnail }}" width="100%">
+                    <img src="/file/medias/{{ $album->id }}/{{ $media->id }}" width="100%">
                 @endif
             </div>
         @empty
